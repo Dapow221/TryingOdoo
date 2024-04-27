@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <!-- model.name tree view code snippets otree-->
+        <record id="training_course_view_tree" model="ir.ui.view">
+            <field name="name">training.course.view.tree</field>
+            <field name="model">training.course</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <!-- Add your fields here -->
+                    <!-- snippets ofield -->
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="user_id"/>
+                </tree>
+            </field>
+        </record>
+        <!--snippets ofo-->
+        <!-- model.name form view -->
+        <record id="training_course_view_form" model="ir.ui.view">
+            <field name="name">training.course.view.form</field>
+            <field name="model">training.course</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <!-- Add your fields here -->
+                            <field name="name"/>
+                            <field name="user_id"/>
+                        </group>
+                        <notebook>
+                        <page name="training_session" string="Training Session">
+                            <field name="session_line">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="start_date"/>
+                                    <field name="duration"/>
+                                    <field name="seats"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                            <page name="deskripsi" string="Keterangan">
+                                <group>
+                                    <field name="description"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- model.name action window snippets oact -->
+        <record id="training_course_action" model="ir.actions.act_window">
+            <field name="name">training.course.action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">training.course</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    <!-- Add Text Here -->
+                </p><p>
+                    <!-- More details about what a user can do with this object will be OK --> 
+                
+                </p>
+            </field>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action snippets omenua -->
+        <menuitem id="kursus_menu_act" name="Data Kursus" parent="pengaturan_menu_categ" action="training_course_action" sequence="10"/>
+    </data>
+</odoo>
