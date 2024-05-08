@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from datetime import timedelta
 
 class TrainingCourse(models.Model):
     _name = 'training.course'
@@ -32,14 +33,21 @@ class TrainingSession(models.Model):
     email = fields.Char(string='Email', related='instruktur_id.email', tracking=True)
     jenis_kel = fields.Selection(related='instruktur_id.jenis_kel', tracking=True)
     peserta_ids = fields.Many2many(comodel_name='peserta', string='Peserta', tracking=True)
-    jml_peserta = fields.Char(compute='_compute_jml_peserta', string='Jumlah Peserta', tracking=True)
+    jml_peserta = fields.Integer(compute='_compute_jml_peserta', string='Jumlah Peserta', tracking=True)
     state = fields.Selection(string='Status', selection=[('draft', 'Draft'), ('progress', 'Sedang Berlangsung'),('done', 'Selesai')], default='draft',tracking=True)
+    end_date = fields.Date(string='Tanggal Selesai', required=True, tracking=True, compute='_compute_end_date', store=True)
     
      
     @api.depends('peserta_ids') #oofcompute
     def _compute_jml_peserta(self):
         for rec in self:
             rec.jml_peserta = len(rec.peserta_ids)
+
+    @api.depends('start_date', 'duration')
+    def _compute_end_date(self):
+        for rec in self:
+           if rec.start_date and rec.duration:
+                rec.end_date = rec.start_date + timedelta(days=rec.duration)
 
     def action_confirm(self):
         self.state = 'progress'

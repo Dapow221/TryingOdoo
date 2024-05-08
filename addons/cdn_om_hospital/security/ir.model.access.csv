@@ -1,2 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_cdn_om_hospital_cdn_om_hospital,cdn_om_hospital.cdn_om_hospital,model_cdn_om_hospital_cdn_om_hospital,base.group_user,1,1,1,1
+access.hospital.patient,access_hospital_patient,cdn_om_hospital.model_hospital_patient,base.group_user,1,1,1,1
+access.hospital.appointment,access_hospital_appointment,cdn_om_hospital.model_hospital_appointment,base.group_user,1,1,1,1
+access.appointment.pharmacy.lines,access_appointment_pharmacy_lines,cdn_om_hospital.model_appointment_pharmacy_lines,base.group_user,1,1,1,1
+
+

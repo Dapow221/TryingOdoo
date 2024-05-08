@@ -13,6 +13,14 @@ class Peserta(models.Model):
     hp_pasangan = fields.Char(string='No Hp Istri / Suami')
     tmp_lahir = fields.Char(string='Tempat Lahir')
     tgl_lahir = fields.Date(string='Tanggal Lahir')
+    no_peserta = fields.Char(string='No Peserta')
+    
+
+    @api.model
+    def create(self, values):
+        values['no_peserta'] = self.env['ir.sequence'].next_by_code('seq.peserta')
+        return super(Peserta, self).create(values)
+    
     
     
     
