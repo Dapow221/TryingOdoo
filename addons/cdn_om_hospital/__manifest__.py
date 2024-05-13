@@ -24,13 +24,18 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'data/patient_data.xml',
+        'data/patient.tag.csv',
+        'data/sequence_data.xml',
+        'wizard/cancel_appointment.xml',
         'views/views.xml',
         'views/templates.xml',
         'views/menu.xml',
         'views/patient.xml',
         'views/female_patient.xml',
         'views/appointment.xml',
-
+        'views/patient_tag.xml',
+        'views/odoo_playground.xml',
 
     ],
     # only loaded in demonstration mode

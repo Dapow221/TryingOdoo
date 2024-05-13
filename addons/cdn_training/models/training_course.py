@@ -10,6 +10,7 @@ class TrainingCourse(models.Model):
     description = fields.Text(string='Description')
     user_id = fields.Many2one(comodel_name='res.users', string='Penanggung Jawab')
     session_line = fields.One2many(comodel_name='training.session', inverse_name='course_id', string='Training Session')
+    product_ids = fields.Many2many(comodel_name='product.product', string='Peralatan/Konsumsi', domain=[('product_training', '!=', 'non_training')])
     
     _sql_constraints = [
         ("name_course_unique", "UNIQUE(name)", "Nama kursus sudah ada"),

@@ -5,7 +5,14 @@
             <field name="name">hospital.view.tree</field>
             <field name="model">hospital.appointment</field>
             <field name="arch" type="xml">
+                <header>
+                    <button name="action_in_consultation" 
+                            string="In Consultation" 
+                            type="object" 
+                            class="oe_highlight"/>
+                </header>
                 <tree decoration-info="state == 'done'" sample="1" multi_edit="1">
+                    <field name="sequence"/>
                     <field name="patient_id"/>
                     <field name="appointment_time"/>
                     <field name="doctor_id" widget="many2one_avatar_user"/>
@@ -21,6 +28,25 @@
             </field>
         </record>
 
+        <record id="hospital_appointment_view_activity" model="ir.ui.view">
+            <field name="name">hospital.appointment.activity</field>
+            <field name="model">hospital.appointment</field>
+            <field name="arch" type="xml">
+                <activity string="Appointments">
+                    <field name="patient_id"/>
+                    <field name="ref"/>
+                    <templates>
+                    <div t-name="activity-box">
+                        <img t-att-src="activity_image('hospital.patient', 'image', record.patient_id.raw_value)" t-att-title="record.patient_id.value" t-att-alt="record.patient_id.value"/>
+                        <div>
+                            <field name="ref" display="full"/>
+                        </div>
+                    </div>
+                    </templates>
+                </activity>
+            </field>
+        </record>
+
         <record id="hospital_appointment_view_form" model="ir.ui.view">
             <field name="name">hospital.view.form</field>
             <field name="model">hospital.appointment</field>
@@ -30,7 +56,9 @@
                     <!-- options="{'clickable': '1'}" -->
                         <button name="action_in_consultation" string="In Consultation" type="object" states="draft" class="oe_highlight"/>
                         <button name="action_done" string="Mark As Done" type="object" states="in_consultation" class="oe_highlight" data-hotkey="v"/>
-                        <button name="action_cancel" string="Cancel" type="object" states="draft,in_consultation" class="oe_highlight" data-hotkey="b"/>
+                        <!-- <button name="action_cancel" string="Cancel" type="object" states="draft,in_consultation" class="oe_highlight" data-hotkey="b"/> -->
+                        <button name="%(cdn_om_hospital.cancel_appointment_wizard_action)d" string="Cancel" type="action" states="draft,in_consultation" class="oe_highlight" data-hotkey="b"/>
+                        <!-- context="{'default_appointment_id': active_id, 'hide_appointment': 1}" -->
                         <button name="action_draft" string="Reset As Draft" type="object" states="cancelled" class="oe_highlight"/>
                         <field name="state" widget="statusbar" nolabel="1"
                             statusbar_visible="draft,in_consultation,done"
@@ -40,13 +68,14 @@
                         <field name="priority" widget="priority"/>
                         <group>
                             <group>
+                                <field name="sequence"/>
                                 <field name="patient_id"/>
                                 <field name="appointment_time"/>
                                 <field name="doctor_id" widget="many2one_avatar"/>
                             </group>
                             <group>
-                                <field name="booking_date" help="Date of booking" default_focus="1"/>
                                 <field name="hide_price"/>
+                                <field name="booking_date" help="Date of booking" default_focus="1"/>
                                 <field name="ref"/>
                                 <!-- <button name="button_test" string="Object Button" type="object" class="oe_highlight"/>
                                 <button name="%(cdn_om_hospital.action_menu_hospital)d" string="Action Button" type="action" class="oe_highlight" confirm="are you sure??" help="are you okay??"/> -->
@@ -56,7 +85,7 @@
                             <page string="Prescription">
                                 <field name='prescription' 
                                 placeholder='Enter your prescription here...'
-                                options="{'collaborative': true, 'resizable': true}"
+                                options="{'collaborative': true, 'resizable': true, 'codeview': true}"
                                 />
                             </page>
                             <page string="Pharmacy">
@@ -103,7 +132,7 @@
             <field name="name">Appointments</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">hospital.appointment</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,activity</field>
             <field name="context">{}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">

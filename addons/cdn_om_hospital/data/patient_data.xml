@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record id="patient_tag_vip" model="patient.tag">
+            <field name="name">VIP</field>
+        </record>
+        <record id="patient_tag_silver" model="patient.tag">
+            <field name="name">SILVER</field>
+        </record>
+        <!-- <record id="patient_tag_test" model="patient.tag">
+            <field name="name">test</field>
+            <field name="active" eval="False"/>
+        </record> -->
+    </data>
+</odoo>

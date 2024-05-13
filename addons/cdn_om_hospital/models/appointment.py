@@ -1,12 +1,13 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 
 class HospitalAppointment(models.Model):
     _name = 'hospital.appointment'
     _description = 'Hospital Appointment'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _rec_name = 'patient_id'
+    _rec_name = "sequence"
 
-    patient_id = fields.Many2one(comodel_name='hospital.patient', string='Patient')
+    patient_id = fields.Many2one(comodel_name='hospital.patient', string='Patient', ondelete="restrict")
     gender = fields.Selection(related='patient_id.gender', readonly=False)
     appointment_time = fields.Datetime(string='Appoinment Time', default=fields.Datetime.now)
     booking_date = fields.Date(string='Booking Date', default=fields.Date.context_today)
@@ -19,7 +20,27 @@ class HospitalAppointment(models.Model):
                                         inverse_name='appointment_id', 
                                         string='Pharmacy Line')
     hide_price = fields.Boolean(string="Hide Price")
+    sequence = fields.Char()
     
+    @api.model
+    def create(self, values):
+        result = super(HospitalAppointment, self)
+        values["sequence"] = self.env["ir.sequence"].next_by_code(
+            "hospital.appointment")
+        return result.create(values)
+
+    def write(self, values):
+        res = super(HospitalAppointment, self)
+        if not self.sequence:
+            values["sequence"] = self.env["ir.sequence"].next_by_code(
+                "hospital.appointment")
+        return res.write(values)
+        
+    def unlink(self):
+        if self.state != 'draft':
+            raise ValidationError(_("Can only delete selain drafted Records"))
+        return super(HospitalAppointment, self).unlink()
+
     @api.onchange('patient_id')
     def onchange_patient_id(self):
         self.ref = self.patient_id.ref
@@ -35,15 +56,16 @@ class HospitalAppointment(models.Model):
 
     def action_in_consultation(self):
         for rec in self:
-            rec.state = 'in_consultation'
+            if rec.state == 'draft':
+                rec.state = 'in_consultation'
     
     def action_done(self):
         for rec in self:
             rec.state = 'done'
     
     def action_cancel(self):
-        for rec in self:
-            rec.state = 'cancelled'
+        action = self.env.ref('cdn_om_hospital.cancel_appointment_wizard_action').read()[0]
+        return action
     
     def action_draft(self):
         for rec in self:

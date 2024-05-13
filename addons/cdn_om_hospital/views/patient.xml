@@ -9,6 +9,7 @@
                     <field name="name" string="Patient Name"/>
                     <field name="ref"/>
                     <field name="age"/>
+                    <field name="tag_ids" widget="many2many_tags"/>
                     <field name="gender"/>
                 </tree>
             </field>
@@ -20,17 +21,34 @@
             <field name="arch" type="xml">
                 <form string="">
                     <sheet>
+                        <field name="images" widget="image" class="oe_avatar"/>
+                            <div>
+                                <h4>
+                                    <field name="ref" readonly="1"/>
+                                </h4>
+                                <h2>
+                                    <label for="name" string="Name" invisible="1"/>
+                                    <field name="name"/>
+                                </h2>
+                            </div>
                         <group>
                             <group>
-                                <field name="name"/>
                                 <field name="age"/>
                                 <field name="date_of_birth"/>
                                 <field name="appointment_id"/>
+                                <field name="appointment_count"/>
                             </group>
                             <group>
                                 <field name="gender"/>
-                                <field name="ref"/>
+                                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                                 <field name="active" invisible="1"/>
+                            </group>
+                            <group string="Other Information" name="other_info">
+                                <field name="parent" attrs="{ 'invisible':[('age','>=',18)] }" />
+                                <field name="marital_state" attrs="{ 'invisible':[('age','&lt;=',18)] }"/>
+                                <field name="partner_name" 
+                                attrs="{'readonly':[('marital_state','!=','married')], 
+                                'required':[('marital_state', '=', 'married')]}"/>
                             </group>
                         </group>
                     </sheet>

@@ -1,10 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
     <data>
-        <menuitem id="menu_hospital_root" name="Hospital" web_icon="cdn_om_hospital,static/description/icon.png" sequence="10"/>
+        <menuitem id="menu_hospital_root" name="Hospital" web_icon="cdn_om_hospital,static/description/icon.png" sequence="1"/>
         <menuitem id="menu_patient_master" name="Patient Details" parent="menu_hospital_root" sequence="10"/>
         <menuitem id="menu_patient" name="Patients" parent="menu_patient_master" action="action_menu_hospital" sequence="10"/>
         <menuitem id="menu_appointment_root" name="Appointment" parent="menu_hospital_root" sequence="10"/>
         <menuitem id="menu_appointment" name="Appointments" parent="menu_appointment_root" action="action_appointment_hospital" sequence="10"/>
+        <menuitem id="menu_configuration" name="Configuration" parent="menu_hospital_root" sequence="20"/>
+        <menuitem id="menu_cancel_appointment" name="Cancelation" parent="menu_appointment_root" action="cancel_appointment_wizard_action" sequence="10"/>
+        <menuitem id="menu_technical" name="Technical" sequence="30" parent="menu_hospital_root">
+            <menuitem id="playground_menu_act" name="Play Ground" action="odoo_playground_action" sequence="10"></menuitem>
+        </menuitem>
     </data>
 </odoo>
