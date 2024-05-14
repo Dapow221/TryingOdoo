@@ -37,8 +37,9 @@ class HospitalAppointment(models.Model):
         return res.write(values)
         
     def unlink(self):
-        if self.state != 'draft':
-            raise ValidationError(_("Can only delete selain drafted Records"))
+        for rec in self:
+            if rec.state != 'draft':
+                raise ValidationError(_("Can only delete selain drafted Records"))
         return super(HospitalAppointment, self).unlink()
 
     @api.onchange('patient_id')

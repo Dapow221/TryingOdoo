@@ -1,6 +1,7 @@
 from odoo import models, fields, api, _
 from datetime import date
 from odoo.exceptions import ValidationError
+from dateutil import relativedelta
 
 class HospitalPatient(models.Model):
     _name = 'hospital.patient'
@@ -9,7 +10,7 @@ class HospitalPatient(models.Model):
 
     name = fields.Char(string='Name', tracking=True)
     date_of_birth = fields.Date(string='Date of Birth')
-    age = fields.Integer(string='Age', compute='_compute_age')
+    age = fields.Integer(string='Age', compute='_compute_age', inverse='_inverse_compute_age', search='_search_age')
     ref = fields.Char(string='Reference', tracking=True, help="Reference from patient record")
     gender = fields.Selection(string='Gender', selection=[('male', 'Male'), ('female', 'Female')], tracking=True, default='female')
     active = fields.Boolean(string='Active', default=True)
@@ -43,7 +44,7 @@ class HospitalPatient(models.Model):
 
     @api.depends('appointment_ids')
     def _compute_appointment_count(self):
-        ## Search count method
+        # Search count method
         for record in self:
             record.appointment_count = self.env["hospital.appointment"].search_count(
                 [("patient_id", "=", record.id)])
@@ -67,6 +68,25 @@ class HospitalPatient(models.Model):
             else:
                 rec.age = 0
     
+    @api.depends('age')
+    def _inverse_compute_age(self):
+        today = date.today()
+        for rec in self:
+            rec.date_of_birth = today - relativedelta.relativedelta(years=rec.age)
+    
+    def _search_age(self, operator, value):
+        date_of_birth = date.today() - relativedelta.relativedelta(years=value)
+        start_year = date_of_birth.replace(day=1, month=1)
+        end_year = date_of_birth.replace(day=31, month=12)
+        return [('date_of_birth', ">=", start_year), ("date_of_birth", "<=", end_year)]
+
+    
+    @api.ondelete(at_uninstall=False)
+    def _check_appointments(self):
+        for rec in self:
+            if rec.appointment_ids:
+                raise ValidationError(_("You cannot delete patient with appointment!"))
+    
     def name_get(self):
         patient_list = []
         for record in self:
@@ -81,4 +101,8 @@ class HospitalPatient(models.Model):
         for rec in self:
             if rec.date_of_birth and rec.date_of_birth > fields.Date.today():
                 raise ValidationError(_("Enter Valid date!"))
+
+    def action_button(self):
+        print('clicked')
+        return
     

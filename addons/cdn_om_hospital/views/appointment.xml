@@ -24,6 +24,21 @@
                         decoration-danger="state == 'canceled'" 
                         decoration-warning="state == 'in_consultation'"
                     />
+                    <button name="action_done" 
+                            attrs="{'invisible': [('state', '!=', 'in_consultation')]}" 
+                            type="object"
+                            class="fa fa-check btn-success"
+                    />
+                    <button name="%(cdn_om_hospital.cancel_appointment_wizard_action)d" 
+                            type="action"
+                            class="fa fa-times btn-danger"
+                            attrs="{'invisible': [('state', 'not in', ('draft', 'in_consultation'))]}" 
+                    />
+                    <groupby name="patient_id">
+                        <field name="name"/>
+                        <button string="Edit" name="edit" type="edit"/>
+                        <button name="action_button" type="object" string="Click Me"/>
+                    </groupby>
                 </tree>
             </field>
         </record>

@@ -34,6 +34,7 @@
         'views/patient.xml',
         'views/female_patient.xml',
         'views/appointment.xml',
+        'views/res_config_settings.xml',
         'views/patient_tag.xml',
         'views/odoo_playground.xml',
 
