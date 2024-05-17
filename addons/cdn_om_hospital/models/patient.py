@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
-from datetime import date
 from odoo.exceptions import ValidationError
+from datetime import date
 from dateutil import relativedelta
 
 class HospitalPatient(models.Model):
@@ -10,7 +10,11 @@ class HospitalPatient(models.Model):
 
     name = fields.Char(string='Name', tracking=True)
     date_of_birth = fields.Date(string='Date of Birth')
-    age = fields.Integer(string='Age', compute='_compute_age', inverse='_inverse_compute_age', search='_search_age')
+    age = fields.Integer(string='Age', 
+                        compute='_compute_age', 
+                        inverse='_inverse_compute_age', 
+                        search='_search_age',
+                        tracking=True)
     ref = fields.Char(string='Reference', tracking=True, help="Reference from patient record")
     gender = fields.Selection(string='Gender', selection=[('male', 'Male'), ('female', 'Female')], tracking=True, default='female')
     active = fields.Boolean(string='Active', default=True)
@@ -41,6 +45,29 @@ class HospitalPatient(models.Model):
     partner_name = fields.Char(
         string="Partner Name",
     )
+
+    is_birthday = fields.Boolean(
+        string="Birthday ?",
+        compute='_compute_is_birthdate'
+    )
+    # contact
+    phone = fields.Char(string='Phone')
+    email = fields.Char(string='Email')
+    website = fields.Char(string='Website')
+    
+    
+
+    @api.depends('date_of_birth')
+    def _compute_is_birthdate(self):
+        for record in self:
+            if record.date_of_birth:
+                today = date.today()
+                if record.date_of_birth.day == today.day and record.date_of_birth.month == today.month:
+                    record.is_birthday = True
+                else:
+                    record.is_birthday = False
+            else:
+                record.is_birthday=False
 
     @api.depends('appointment_ids')
     def _compute_appointment_count(self):

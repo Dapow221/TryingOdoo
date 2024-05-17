@@ -37,6 +37,7 @@
         'views/res_config_settings.xml',
         'views/patient_tag.xml',
         'views/odoo_playground.xml',
+        'views/operation.xml',
 
     ],
     # only loaded in demonstration mode

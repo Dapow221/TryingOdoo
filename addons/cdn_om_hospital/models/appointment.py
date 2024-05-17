@@ -6,6 +6,7 @@ class HospitalAppointment(models.Model):
     _description = 'Hospital Appointment'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = "sequence"
+    _order = "id desc"
 
     patient_id = fields.Many2one(comodel_name='hospital.patient', string='Patient', ondelete="restrict")
     gender = fields.Selection(related='patient_id.gender', readonly=False)
@@ -21,6 +22,10 @@ class HospitalAppointment(models.Model):
                                         string='Pharmacy Line')
     hide_price = fields.Boolean(string="Hide Price")
     sequence = fields.Char()
+    operation_id = fields.Many2one(comodel_name='hospital.operation', string='Operation', tracking=True)
+    progress = fields.Integer(string="Progress", compute='_compute_progress')
+    duration = fields.Float(string="Duration")
+    
     
     @api.model
     def create(self, values):
@@ -71,7 +76,18 @@ class HospitalAppointment(models.Model):
     def action_draft(self):
         for rec in self:
             rec.state = 'draft'
-
+    
+    @api.depends('state')
+    def _compute_progress(self):
+        for rec in self:
+            progress = 0
+            if rec.state == 'draft':
+                progress = 33
+            elif rec.state == 'in_consultation':
+                progress = 66
+            elif rec.state == 'done':
+                progress = 100
+            rec.progress = progress
 
 
 class AppointmentPharmacyLines(models.Model):
